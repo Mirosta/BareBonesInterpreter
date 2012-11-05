@@ -1,10 +1,11 @@
+package BareBones;
 import java.util.HashMap;
 
 public class BareBonesIncr extends BareBonesStatement 
 {
 	String variableName;
 	
-	public BareBonesIncr(String[] Lines, String[] CurrentLineParts, Integer currentLine, HashMap<String, Integer> Variables) throws BareBonesSyntaxException, BareBonesCompilerException
+	public BareBonesIncr(String[] Lines, String[] CurrentLineParts, LineReference currentLine, HashMap<String, Integer> Variables) throws BareBonesSyntaxException, BareBonesCompilerException
 	{
 		super(Lines, currentLine, Variables);
 		
@@ -15,7 +16,7 @@ public class BareBonesIncr extends BareBonesStatement
 	}
 	
 	@Override
-	public void executeStatment() 
+	public void executeStatment(LineReference currentLineNumber) 
 	{
 		setVariable(variableName, getVariable(variableName) + 1);
 	}

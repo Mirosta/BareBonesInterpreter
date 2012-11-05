@@ -1,10 +1,11 @@
+package BareBones;
 import java.util.HashMap;
 
 public class BareBonesDecr extends BareBonesStatement 
 {
 	String variableName;
 	
-	public BareBonesDecr(String[] Lines, String[] CurrentLineParts, Integer currentLine, HashMap<String, Integer> Variables) throws BareBonesSyntaxException, BareBonesCompilerException
+	public BareBonesDecr(String[] Lines, String[] CurrentLineParts, LineReference currentLine, HashMap<String, Integer> Variables) throws BareBonesSyntaxException, BareBonesCompilerException
 	{
 		super(Lines, currentLine, Variables);
 		
@@ -15,7 +16,7 @@ public class BareBonesDecr extends BareBonesStatement
 	}
 	
 	@Override
-	public void executeStatment() throws BareBonesRuntimeException 
+	public void executeStatment(LineReference currentLineNumber) throws BareBonesRuntimeException 
 	{
 		Integer val = getVariable(variableName);
 		if(val - 1 < 0) throw new BareBonesRuntimeException("Cannot have a non positive integer value in a variable");

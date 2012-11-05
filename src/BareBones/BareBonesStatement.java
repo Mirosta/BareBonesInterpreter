@@ -1,3 +1,4 @@
+package BareBones;
 import java.util.HashMap;
 
 
@@ -5,12 +6,12 @@ public abstract class BareBonesStatement
 {
 	HashMap<String, Integer> variables;
 	
-	public BareBonesStatement(String[] lines, Integer currentLine, HashMap<String, Integer> Variables)
+	public BareBonesStatement(String[] lines, LineReference currentLine, HashMap<String, Integer> Variables)
 	{
 		variables = Variables;
 	}
 	
-	public abstract void executeStatment() throws BareBonesRuntimeException;
+	public abstract void executeStatment(LineReference currentLineNumber) throws BareBonesRuntimeException;
 	
 	protected void setVariable(String name, Integer value)
 	{
