@@ -11,18 +11,24 @@ public abstract class BareBonesStatement
 		variables = Variables;
 	}
 	
-	public abstract void executeStatment(LineReference currentLineNumber) throws BareBonesRuntimeException;
+	public abstract void executeStatment(LineReference currentLineNumber) throws BareBonesRuntimeException, InterruptedException;
 	
 	protected void setVariable(String name, Integer value)
 	{
-		variables.put(name, value);
+		synchronized(variables)
+		{
+			variables.put(name, value);
+		}
 	}
 	
 	protected Integer getVariable(String name)
 	{
-		if(!variables.containsKey(name)) setVariable(name, 0);
+		synchronized(variables)
+		{
+			if(!variables.containsKey(name)) setVariable(name, 0);
 		
-		return variables.get(name);
+			return variables.get(name);
+		}
 	}
 
 }

@@ -44,18 +44,17 @@ public class BareBonesWhile extends BareBonesStatement
 	}
 	
 	@Override
-	public void executeStatment(LineReference currentLineNumber) throws BareBonesRuntimeException 
+	public void executeStatment(LineReference currentLineNumber) throws BareBonesRuntimeException, InterruptedException 
 	{
-		int startNumber = currentLineNumber.getLineNumber();
+		int startNumber = currentLineNumber.getLineNumber()+1;
 		
 		while(getVariable(variableName) > 0)
 		{
 			currentLineNumber.setLineNumber(startNumber);
-			for(BareBonesStatement curStatement : innerStatements)
-			{
-				curStatement.executeStatment(currentLineNumber);
-				currentLineNumber.increment();
-			}
+			
+			BareBonesInterpreter.RunProgram(innerStatements, currentLineNumber);
+			
+			if(Thread.interrupted()) throw new InterruptedException();
 		}
 		currentLineNumber.increment();
 	}

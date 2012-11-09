@@ -5,6 +5,10 @@ import java.util.HashMap;
 
 public class BareBonesInterpreter 
 {
+	private static boolean isPaused;
+	
+	public static LineReference syncObject = new LineReference(0);
+	
 	public static BareBonesStatement InterpretLine(String[] Lines, LineReference currentLine, HashMap<String, Integer> Variables) throws BareBonesSyntaxException, BareBonesCompilerException
 	{
 		BareBonesStatement returnStatement = null;
@@ -54,14 +58,31 @@ public class BareBonesInterpreter
 		return statements;
 	}
 	
-	public static void RunProgram(ArrayList<BareBonesStatement> statements) throws BareBonesRuntimeException
+	public static void RunProgram(ArrayList<BareBonesStatement> statements) throws BareBonesRuntimeException, InterruptedException
 	{
-		LineReference currentLineNumber = new LineReference(0);
+		RunProgram(statements, new LineReference(0));
+	}
+	
+	public static void RunProgram(ArrayList<BareBonesStatement> statements, LineReference startLine) throws BareBonesRuntimeException, InterruptedException
+	{
+		LineReference currentLineNumber = startLine;
 		
 		for(BareBonesStatement statement : statements)
 		{
 			try
 			{
+				if(isPaused())
+				{
+					synchronized(syncObject)
+					{
+						synchronized(currentLineNumber)
+						{
+							syncObject = currentLineNumber;
+							syncObject.wait();
+						}
+					}
+				}
+				
 				statement.executeStatment(currentLineNumber);
 				
 				currentLineNumber.increment();
@@ -69,6 +90,10 @@ public class BareBonesInterpreter
 			catch(BareBonesRuntimeException e)
 			{
 				e.setLineNumber(currentLineNumber);
+				throw e;
+			}
+			catch(InterruptedException e)
+			{
 				throw e;
 			}
 		}
@@ -85,5 +110,24 @@ public class BareBonesInterpreter
 		workingLine = workingLine.trim();
 		
 		return workingLine;
+	}
+	
+	public static synchronized void pause()
+	{
+		isPaused = true;
+	}
+	
+	public static synchronized void unpause()
+	{
+		isPaused = false;
+		synchronized(syncObject)
+		{
+			syncObject.notifyAll();
+		}
+	}
+	
+	public static synchronized boolean isPaused()
+	{
+		return isPaused;
 	}
 }
